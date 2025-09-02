@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic.detail import DetailView
-from .models import Book, Library
+from .models import Library, Book 
 
 # Existing views
 def list_books(request):
