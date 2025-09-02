@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import  permission_required, login_required, user_passes_test
 from .models import Library, Book, UserProfile
+from django.contrib.auth.decorators import permission_required
 
 # Function-based view for listing books
 def list_books(request):
