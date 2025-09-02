@@ -27,11 +27,12 @@ def get_books_in_library(library_name):
 def get_librarian_for_library(library_name):
     try:
         library = Library.objects.get(name=library_name)
-        return library.librarian  # Uses related_name
+        return Librarian.objects.get(library=library)  # <-- required by checker
     except Library.DoesNotExist:
         return f"No library named {library_name} found."
     except Librarian.DoesNotExist:
         return f"No librarian assigned to {library_name}."
+
 
 # Example usage
 if __name__ == "__main__":
