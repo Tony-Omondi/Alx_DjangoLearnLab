@@ -1,35 +1,28 @@
-import os
-import django
-
-# Setup Django environment (only needed if running outside manage.py shell)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "LibraryProject.settings")
-django.setup()
+# query_samples.py
 
 from relationship_app.models import Author, Book, Library, Librarian
 
-# 1. Query all books by a specific author
-def get_books_by_author(author_name):
-    author = Author.objects.get(name=author_name)
-    return Book.objects.filter(author=author)
+# Sample queries
 
+# 1. Create Authors
+author1 = Author.objects.create(name="Chinua Achebe")
+author2 = Author.objects.create(name="Ngũgĩ wa Thiong'o")
 
-# 2. List all books in a library
-def get_books_in_library(library_name):
-    library = Library.objects.get(name=library_name)
-    return library.books.all()
+# 2. Create Books
+book1 = Book.objects.create(title="Things Fall Apart", author=author1)
+book2 = Book.objects.create(title="The River Between", author=author2)
 
+# 3. Create Library
+library = Library.objects.create(name="Nairobi Public Library")
 
-# 3. Retrieve the librarian for a library
-def get_librarian_for_library(library_name):
-    library = Library.objects.get(name=library_name)
-    return library.librarian  # thanks to related_name
+# 4. Add books to library (Many-to-Many relationship)
+library.books.add(book1, book2)
 
+# 5. Create Librarian
+librarian = Librarian.objects.create(name="Mary Wanjiku", library=library)
 
-# Example usage
-if __name__ == "__main__":
-    # Replace with actual names from your DB
-    print("Books by J.K. Rowling:", get_books_by_author("J.K. Rowling"))
-    print("Books in Central Library:", get_books_in_library("Central Library"))
-    print("Librarian of Central Library:", get_librarian_for_library("Central Library"))
-
-LibraryProject
+# 6. Queries
+print("All Authors:", Author.objects.all())
+print("All Books:", Book.objects.all())
+print("Books in Library:", library.books.all())
+print("Librarian for Library:", library.librarian.name)
