@@ -2,10 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.views.generic.detail import DetailView
-from .models import Library, Book
-from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
-from .models import UserProfile
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from .models import Library, Book, UserProfile
 
 # Function-based view for listing books
 def list_books(request):
@@ -37,12 +35,31 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, "relationship_app/register.html", {"form": form})
 
+
+# ✅ Permission-based book management views
+@permission_required("relationship_app.can_add_book")
+def add_book_view(request):
+    return render(request, "relationship_app/add_book.html")
+
+
+@permission_required("relationship_app.can_change_book")
+def edit_book_view(request):
+    return render(request, "relationship_app/edit_book.html")
+
+
+@permission_required("relationship_app.can_delete_book")
+def delete_book_view(request):
+    return render(request, "relationship_app/delete_book.html")
+
+
 # Helper functions for role checks
 def is_admin(user):
     return hasattr(user, "userprofile") and user.userprofile.role == "Admin"
 
+
 def is_librarian(user):
     return hasattr(user, "userprofile") and user.userprofile.role == "Librarian"
+
 
 def is_member(user):
     return hasattr(user, "userprofile") and user.userprofile.role == "Member"
