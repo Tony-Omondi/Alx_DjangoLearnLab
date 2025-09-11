@@ -16,11 +16,14 @@ class Author(models.Model):
 # Book Model
 # =======================
 from django.db import models
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
-    publication_year = models.IntegerField()
+    publication_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         permissions = [
@@ -31,7 +34,7 @@ class Book(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.title} by {self.author} ({self.publication_year})"
+        return self.title
 
 
 
