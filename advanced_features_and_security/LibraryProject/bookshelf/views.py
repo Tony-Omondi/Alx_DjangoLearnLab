@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseBadRequest
 from .models import Book
-from .forms import BookForm
+from .forms import BookForm, ExampleForm  # Added ExampleForm import
 
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
@@ -51,7 +51,6 @@ def book_delete(request, pk):
         return redirect('book_list')
     return render(request, 'bookshelf/book_confirm_delete.html', {'book': book})
 
-# Example search view with safe input handling
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_search(request):
     query = request.GET.get('q', '')
@@ -60,3 +59,24 @@ def book_search(request):
     # Safe ORM query with parameterization
     books = Book.objects.filter(title__icontains=query)
     return render(request, 'bookshelf/book_list.html', {'books': books, 'query': query})
+
+@permission_required('bookshelf.can_view', raise_exception=True)
+def example_view(request):
+    """
+    View for handling ExampleForm submissions.
+    Demonstrates secure form handling with CSRF protection and input validation.
+    """
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process cleaned data securely (e.g., log or save to database)
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # For demo purposes, redirect to book_list
+            return redirect('book_list')
+        else:
+            return render(request, 'bookshelf/form_example.html', {'form': form}, status=400)
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/form_example.html', {'form': form})
