@@ -1,12 +1,9 @@
-# LibraryProject/bookshelf/models.py
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     """Custom manager for CustomUser"""
-
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email must be set")
@@ -39,3 +36,38 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+class Book(models.Model):
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=13, unique=True, blank=True, null=True)
+    published_date = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        'CustomUser',  # Reference CustomUser instead of default User
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='books'
+    )
+
+    def __str__(self):
+        return self.title
+
+    def can_create(self, user):
+        """
+        Check if the user can create a book.
+        Returns True to allow anyone to create (matches AllowAny in settings).
+        """
+        return True
+
+    def can_delete(self, user):
+        """
+        Check if the user can delete this book.
+        Returns True to allow anyone to delete (matches open access for development).
+        """
+        return True
+
+    class Meta:
+        ordering = ['title']
