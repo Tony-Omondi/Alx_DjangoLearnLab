@@ -15,23 +15,19 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i=fpm&fii=g#v@qb4zkz^90uq6w#$5b-9+(^^pkyquz&)bqvze'
+SECRET_KEY = 'django-insecure-i=fpm&fii=g#v@qb4zkz^90uq6w#$5b-9+(^^pkyquz&)bqvze'  # Replace with secure key in production
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # Set to False for production to prevent information leaks
 
-ALLOWED_HOSTS = []
+# Allowed hosts for production
+ALLOWED_HOSTS = ['yourdomain.com', 'localhost', '127.0.0.1']  # Update with your domain
 
 # Custom user model
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+    'csp',  # Added for Content Security Policy
 ]
 
 MIDDLEWARE = [
@@ -51,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',  # Added for CSP
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -72,10 +70,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'LibraryProject.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -83,10 +79,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -102,25 +96,48 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security settings to protect against common vulnerabilities
+SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+CSRF_COOKIE_SECURE = True  # CSRF cookies only sent over HTTPS
+SESSION_COOKIE_SECURE = True  # Session cookies only sent over HTTPS
+SECURE_BROWSER_XSS_FILTER = True  # Enable browser XSS filtering
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
+X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking by disallowing framing
+SECURE_HSTS_SECONDS = 31536000  # Enable HSTS for 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to subdomains
+SECURE_HSTS_PRELOAD = True  # Allow HSTS preload listing
+
+# Content Security Policy (CSP) settings
+CSP_DEFAULT_SRC = ("'self'",)  # Restrict content to same origin
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")  # Allow inline scripts (adjust for external scripts)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")  # Allow inline styles (adjust for external styles)
+CSP_IMG_SRC = ("'self'", "data:")  # Allow images from same origin and data URIs
+
+"""
+Security Notes:
+- DEBUG=False prevents sensitive information leaks in production.
+- SECURE_SSL_REDIRECT ensures all traffic uses HTTPS.
+- CSRF_COOKIE_SECURE and SESSION_COOKIE_SECURE protect cookies over HTTPS.
+- SECURE_BROWSER_XSS_FILTER and SECURE_CONTENT_TYPE_NOSNIFF add browser-level protections.
+- X_FRAME_OPTIONS='DENY' prevents clickjacking.
+- HSTS settings enforce HTTPS for one year and support preload.
+- CSP settings restrict content sources to mitigate XSS risks.
+- Replace SECRET_KEY with a secure value in production (e.g., using environment variables).
+- Update ALLOWED_HOSTS with your production domain.
+- Install 'django-csp' with 'pip install django-csp' for CSP middleware.
+"""
