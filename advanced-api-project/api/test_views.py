@@ -62,11 +62,12 @@ class BookAPITests(APITestCase):
         Test POST /api/books/create/ with authenticated user.
         Should return 201 Created and correct book data.
         """
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')  # Use login
         response = self.client.post('/api/books/create/', self.valid_book_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Book.objects.count(), 3)  # Two initial books + new one
         self.assertEqual(response.data['title'], self.valid_book_data['title'])
+        self.client.logout()
 
     def test_create_book_unauthenticated(self):
         """
@@ -81,17 +82,18 @@ class BookAPITests(APITestCase):
         Test POST /api/books/create/ with invalid data (future publication year).
         Should return 400 Bad Request.
         """
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')  # Use login
         response = self.client.post('/api/books/create/', self.invalid_book_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('publication_year', response.data)
+        self.client.logout()
 
     def test_update_book_authenticated(self):
         """
         Test PUT /api/books/update/<id>/ with authenticated user.
         Should return 200 OK and updated book data.
         """
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')  # Use login
         updated_data = {
             'title': 'Updated Harry Potter',
             'publication_year': 1998,
@@ -102,6 +104,7 @@ class BookAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.book1.title, updated_data['title'])
         self.assertEqual(self.book1.publication_year, updated_data['publication_year'])
+        self.client.logout()
 
     def test_update_book_unauthenticated(self):
         """
@@ -121,10 +124,11 @@ class BookAPITests(APITestCase):
         Test DELETE /api/books/delete/<id>/ with authenticated user.
         Should return 204 No Content and remove the book.
         """
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpass123')  # Use login
         response = self.client.delete(f'/api/books/delete/{self.book1.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Book.objects.count(), 1)  # One book left
+        self.client.logout()
 
     def test_delete_book_unauthenticated(self):
         """
