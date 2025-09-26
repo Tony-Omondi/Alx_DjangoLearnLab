@@ -41,6 +41,24 @@ INSTALLED_APPS = [
     'api',
 ]
 
+
+
+
+# Add REST Framework settings for authentication
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # For admin and testing
+        'rest_framework.authentication.BasicAuthentication',    # For API clients
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Default to allow customization in views
+    ],
+}
+
+
+
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
