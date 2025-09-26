@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter  # Imports for s
 from .models import Book
 from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-
+from django_filters import rest_framework
 # View to list all books with filtering, searching, and ordering
 class BookListView(generics.ListAPIView):
     """
