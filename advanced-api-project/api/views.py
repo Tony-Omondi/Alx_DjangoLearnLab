@@ -1,11 +1,14 @@
+
+
+# View to list all books with filtering, searching, and ordering
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from django_filters.rest_framework import DjangoFilterBackend  # Import for filtering
-from rest_framework.filters import SearchFilter, OrderingFilter  # Imports for search and ordering
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters  # Use filters alias for OrderingFilter and SearchFilter
 from .models import Book
 from .serializers import BookSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters import rest_framework
+
 # View to list all books with filtering, searching, and ordering
 class BookListView(generics.ListAPIView):
     """
@@ -18,9 +21,9 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]  # Enable filtering, search, and ordering
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]  # Enable filtering, search, and ordering
     filterset_fields = ['title', 'publication_year', 'author']  # Fields for filtering
-    search_fields = ['title', 'author__name']  # Fields for searching
+    search_fields = ['title', 'author__name']  # Fields for searching (title and author name)
     ordering_fields = ['title', 'publication_year']  # Fields for ordering
     ordering = ['title']  # Default ordering
 
