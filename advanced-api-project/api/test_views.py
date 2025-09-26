@@ -1,12 +1,11 @@
-from django.test import TestCase
-from rest_framework.test import APIClient, force_authenticate
-from django.contrib.auth.models import User
+from rest_framework.test import APITestCase  # Required import
 from rest_framework import status
+from django.contrib.auth.models import User
 from api.models import Author, Book
 from api.serializers import BookSerializer
 from datetime import datetime
 
-class BookAPITests(TestCase):
+class BookAPITests(APITestCase):
     """
     Test suite for Book model API endpoints.
     Tests CRUD operations, filtering, searching, ordering, and permissions.
@@ -16,7 +15,6 @@ class BookAPITests(TestCase):
         Set up test data and client before each test.
         Creates a user, author, and two books for testing.
         """
-        self.client = APIClient()
         self.user = User.objects.create_user(
             username='testuser', password='testpass123'
         )
@@ -134,7 +132,7 @@ class BookAPITests(TestCase):
         Should return 403 Forbidden.
         """
         response = self.client.delete(f'/api/books/delete/{self.book1.id}/')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_filter_by_title(self):
         """
