@@ -151,14 +151,14 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         context['post_id'] = self.object.post.pk
         return context
 
-class TagDetailView(ListView):
+class PostByTagListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
 
     def get_queryset(self):
-        tag_name = self.kwargs['tag_name']
-        return Post.objects.filter(tags__name__in=[tag_name]).order_by('-published_date')
+        tag_slug = self.kwargs['tag_slug']
+        return Post.objects.filter(tags__name__in=[tag_slug]).order_by('-published_date')
 
 def search(request):
     query = request.GET.get('q', '')
