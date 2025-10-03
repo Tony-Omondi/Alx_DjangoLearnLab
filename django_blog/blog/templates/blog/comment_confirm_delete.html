@@ -8,7 +8,7 @@
     <form method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Confirm Delete</button>
-        <a href="{% url 'blog:post_detail' object.post.pk %}">Cancel</a>
+        <a href="{% url 'blog:post_detail' post_id %}">Cancel</a>
     </form>
 </div>
 <style>

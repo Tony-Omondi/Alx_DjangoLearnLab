@@ -20,8 +20,8 @@
                 <p><small>Updated: {{ comment.updated_at|date:"F d, Y H:i" }}</small></p>
             {% endif %}
             {% if user.is_authenticated and user == comment.author %}
-                <a href="{% url 'blog:comment_edit' post_id=post.pk comment_id=comment.pk %}">Edit</a> |
-                <a href="{% url 'blog:comment_delete' post_id=post.pk comment_id=comment.pk %}">Delete</a>
+                <a href="{% url 'blog:comment_edit' comment.pk %}">Edit</a> |
+                <a href="{% url 'blog:comment_delete' comment.pk %}">Delete</a>
             {% endif %}
         </div>
     {% empty %}
@@ -29,7 +29,7 @@
     {% endfor %}
     {% if user.is_authenticated %}
         <h4>Add a Comment</h4>
-        <form method="post" action="{% url 'blog:comment_new' post_id=post.pk %}">
+        <form method="post" action="{% url 'blog:comment_new' post.pk %}">
             {% csrf_token %}
             {{ comment_form.as_p }}
             <button type="submit" class="btn btn-primary">Submit Comment</button>

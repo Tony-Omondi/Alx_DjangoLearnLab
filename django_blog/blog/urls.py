@@ -13,7 +13,7 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
-    path('post/<int:post_id>/comments/new/', views.CommentCreateView.as_view(), name='comment_new'),
-    path('post/<int:post_id>/comments/<int:comment_id>/edit/', views.CommentUpdateView.as_view(), name='comment_edit'),
-    path('post/<int:post_id>/comments/<int:comment_id>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
+    path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment_new'),
+    path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment_edit'),
+    path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
 ]
