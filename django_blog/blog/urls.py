@@ -1,9 +1,12 @@
-# blog/urls.py
 from django.urls import path
 from . import views
 
-app_name = 'blog'  # Namespace for the blog app
+app_name = 'blog'
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Home page for the blog
+    path('', views.home, name='home'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('register/', views.register, name='register'),
+    path('profile/', views.profile, name='profile'),
 ]
