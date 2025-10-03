@@ -163,6 +163,6 @@ class TagDetailView(ListView):
 def search(request):
     query = request.GET.get('q', '')
     posts = Post.objects.filter(
-        Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__in=[query])
+        Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
     ).distinct().order_by('-published_date')
     return render(request, 'blog/search_results.html', {'posts': posts, 'query': query, 'title': 'Search Results'})
