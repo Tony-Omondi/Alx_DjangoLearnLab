@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>{{ post.title }}</h2>
+    <p>By {{ post.author }} on {{ post.published_date|date:"F d, Y" }}</p>
+    <p>{{ post.content }}</p>
+    {% if user.is_authenticated and user == post.author %}
+        <a href="{% url 'blog:post_edit' post.pk %}">Edit</a> |
+        <a href="{% url 'blog:post_delete' post.pk %}">Delete</a>
+    {% endif %}
+    <p><a href="{% url 'blog:post_list' %}">Back to Posts</a></p>
+</div>
+<style>
+.container { max-width: 800px; margin: 50px auto; }
+</style>
+{% endblock %}

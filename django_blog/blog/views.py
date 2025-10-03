@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import CustomUserCreationForm, UserProfileForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .forms import CustomUserCreationForm, UserProfileForm, PostForm
+from .models import Post
 
 def home(request):
     return render(request, 'blog/base.html', {'title': 'Welcome to Django Blog'})
@@ -14,7 +17,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registration successful. You are now logged in.')
-            return redirect('home')
+            return redirect('blog:home')
         else:
             messages.error(request, 'Registration failed. Please correct the errors below.')
     else:
@@ -22,8 +25,6 @@ def register(request):
     return render(request, 'blog/register.html', {'form': form, 'title': 'Register'})
 
 def user_login(request):
-    from django.contrib.auth.views import LoginView
-    # Customizing LoginView directly in the view for simplicity
     if request.method == 'POST':
         from django.contrib.auth import authenticate, login
         username = request.POST['username']
@@ -55,3 +56,40 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user)
     return render(request, 'blog/profile.html', {'form': form, 'title': 'Profile'})
+
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+    ordering = ['-published_date']
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = '/'
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
