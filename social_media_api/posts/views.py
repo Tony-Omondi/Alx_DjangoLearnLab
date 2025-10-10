@@ -5,6 +5,8 @@ from rest_framework.filters import SearchFilter
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import BasePermission
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 class IsOwnerOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -32,3 +34,13 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializer
+
+    def get(self, request):
+        following = request.user.following.all()
+        posts = Post.objects.filter(author__in=following).order_by('-created_at')
+        serializer = self.serializer_class(posts, many=True)
+        return Response(serializer.data)
