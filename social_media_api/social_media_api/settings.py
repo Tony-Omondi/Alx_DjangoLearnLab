@@ -63,8 +63,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 # Database
+# Database
+# ---------------------------------------------
 DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',   # or 'django.db.backends.mysql', 'django.db.backends.sqlite3'
+        'NAME': 'DBNAME',                           # → your database name
+        'USER': 'USERNAME',                         # → your database username
+        'PASSWORD': 'PASSWORD',                     # → your database password
+        'HOST': 'HOST',                             # → database host (e.g., 'localhost' or a remote IP/domain)
+        'PORT': '5432',                             # → e.g., 5432 for PostgreSQL, 3306 for MySQL
+    }
 }
 
 # Password validation
