@@ -31,7 +31,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         post = serializer.save(author=self.request.user)
-        # Notify followers of new post
         for follower in self.request.user.followers.all():
             Notification.objects.create(
                 recipient=follower,
@@ -49,7 +48,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         comment = serializer.save(author=self.request.user)
-        # Notify post author of new comment
         if comment.post.author != self.request.user:
             Notification.objects.create(
                 recipient=comment.post.author,
@@ -68,7 +66,6 @@ class LikeView(APIView):
         if Like.objects.filter(user=request.user, post=post).exists():
             return Response({'error': 'You already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
         like = Like.objects.create(user=request.user, post=post)
-        # Notify post author of new like
         if post.author != request.user:
             Notification.objects.create(
                 recipient=post.author,
